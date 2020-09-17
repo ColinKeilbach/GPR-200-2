@@ -69,6 +69,31 @@ vec4 myEffect1(in vec2 fragCoord, in vec2 resolution, float size) { //size varia
     return returnColor;
 }
 
+//For getting the distance between two points (rh and lh)
+float getDistance(vec2 rh, vec2 lh) {
+    float xDistance = pow((rh.x - lh.x), 2.0); //Gets the x part of the distance
+    float yDistance = pow((rh.y - lh.y), 2.0); //Gets the y part of the distance
+    float pDistance = sqrt(xDistance + yDistance);    //Gets the distance from lh to rh
+    
+    return pDistance; //Returns the distance
+}
+
+//Make a circle in the middle of the screen
+vec4 myEffect2(in vec2 fragCoord, in vec2 resolution, vec2 center, float radius, vec4 color1, vec4 color2) { //radius variable for the radius of the circle
+    vec4 returnColor = vec4(0.0, 0.0, 1.0, 0.0); //Returns blue when there is no other effect
+    
+	float pDistance = getDistance(center, fragCoord); //Gets the distance from the current pixel to the center of the circle
+    
+    //This draws the circle
+    if(pDistance < radius) { //pixels inside the radius are the circle
+        returnColor =  color1; //The circle will be a gradient
+    } else {
+        returnColor = color2; //The background for the circle will be the checker board
+    }
+    
+    return returnColor;
+}
+
 //out reference for the output instead of returning something normally
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) //FragCoord is the current pixel
 {
@@ -84,6 +109,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) //FragCoord is the curre
     //Variable for myEffect1
     float checkerSize = 16.0;
     //fragColor = myEffect1(fragCoord, iResolution.xy, checkerSize); //Creates a checker board pattern
+    
+    //Variables for myEffect2
+    float circleRadius = 50.0;
+    vec2 circleCenter = vec2(iResolution.x/2.0, iResolution.y/2.0); //Center of the screen
+    //myEffect2(currentPixel, resolution, centerPoint, radius, myEffect0(fragCoord, resolution), myEffect1(fragCoord, resolution, 8.0));
+    //fragColor = myEffect2(fragCoord, iResolution.xy, circleCenter, circleRadius); //Creates a circle
     
     //Arrays
     //float myArray[6] = float[6](1.0, 2.0, 3.0, 3.0, 4.0, 5.0, 6.0);
