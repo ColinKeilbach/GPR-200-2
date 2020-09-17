@@ -94,6 +94,27 @@ vec4 myEffect2(in vec2 fragCoord, in vec2 resolution, vec2 center, float radius,
     return returnColor;
 }
 
+//Moving Circle Shader
+vec4 myEffect3(in vec2 fragCoord, in vec2 resolution, in float time, vec2 origin, int timesRun) {
+    
+    vec4 returnColor = vec4(1.0, 1.0, 1.0, 1.0); //Display white when there are no other effect
+    
+    //Variables
+    float circleGrowth = 10.0; //This is used to modify the rate that the circle grows compaired to the spiral
+    //Get the center of the circle
+    //This will make the circle move in a spiral over time
+    float circleX = (time * cos(time)) + origin.x;
+    float circleY = (time * sin(time)) + origin.y;
+    vec2 circleCenter = vec2(circleX, circleY);
+    
+    if( timesRun % 2 == 0 ) {
+   		returnColor = myEffect2(fragCoord, resolution, circleCenter, (time * circleGrowth), myEffect0(fragCoord, resolution), myEffect1(fragCoord, resolution, 8.0));
+    } else {
+    	returnColor = myEffect2(fragCoord, resolution, circleCenter, (time * circleGrowth), myEffect1(fragCoord, resolution, 8.0), myEffect0(fragCoord, resolution));
+    }
+    return returnColor;
+}
+
 //out reference for the output instead of returning something normally
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) //FragCoord is the current pixel
 {
@@ -115,6 +136,19 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) //FragCoord is the curre
     vec2 circleCenter = vec2(iResolution.x/2.0, iResolution.y/2.0); //Center of the screen
     //myEffect2(currentPixel, resolution, centerPoint, radius, myEffect0(fragCoord, resolution), myEffect1(fragCoord, resolution, 8.0));
     //fragColor = myEffect2(fragCoord, iResolution.xy, circleCenter, circleRadius); //Creates a circle
+    
+    
+    //This will allow myEffect3 to run more than once
+    float time = iTime;
+    int timesRun = int(time) / 2;
+    
+    time = time - float(timesRun * 2);
+    
+    //Variables for myEffect3
+    vec2 effectCenter = circleCenter; //Center of the screen
+    //myEffect3(currentPixel, resolution, time, effectOrigin);
+    fragColor = myEffect3(fragCoord, iResolution.xy, sqrt(time * 400.0), effectCenter, timesRun); //Custom Shader
+    //sqrt(time * 900) used to make the circle grow fast in the beginning and slow at the end
     
     //Arrays
     //float myArray[6] = float[6](1.0, 2.0, 3.0, 3.0, 4.0, 5.0, 6.0);
