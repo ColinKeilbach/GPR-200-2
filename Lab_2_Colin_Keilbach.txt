@@ -30,6 +30,45 @@ vec4 myEffect0(in vec2 fragCoord, in vec2 resolution){
     return returnColor;
 }
 
+//Make a checker board pattern
+vec4 myEffect1(in vec2 fragCoord, in vec2 resolution, float size) { //size variable used to get the size of the squares in pizels
+ 	
+    vec4 returnColor = vec4(0.0, 1.0, 0.0, 0.0); //Returns green when there is no other effect
+    
+    //Used for return color
+    const vec4 BLACK = vec4(0.0, 0.0, 0.0, 0.0);
+    const vec4 WHITE = vec4(1.0, 1.0, 1.0, 1.0);
+    
+    //Get color withe SQUARE_SIZE pixels
+    //Saved as int to remove decimals and allow % use
+    int xColor = int(fragCoord.x/size);
+    int yColor = int(fragCoord.y/size);
+    
+    //Checks if the current x value is even or odd
+    // even returns BLACK
+    // odd returns WHITE
+    if( xColor%2 == 0 ) {
+        returnColor = BLACK;
+    } else {
+        returnColor = WHITE;
+    }
+    
+    //Checks if the current y value is even or odd
+    // even switches the current return color to the other
+    //  BLACK > WHITE or WHITE > BLACK
+    // odd leaves the color the same
+    if( yColor%2 == 0 ) {
+        if( returnColor == WHITE ) {
+            returnColor = BLACK;
+        } else {
+            returnColor = WHITE;
+        }
+    }
+    
+    //Return color
+    return returnColor;
+}
+
 //out reference for the output instead of returning something normally
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) //FragCoord is the current pixel
 {
@@ -40,7 +79,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) //FragCoord is the curre
     //Because it is running the same variable for each
     
     
-    fragColor = myEffect0(fragCoord, iResolution.xy); //Creates a static gradient
+    //fragColor = myEffect0(fragCoord, iResolution.xy); //Creates a static gradient
+    
+    //Variable for myEffect1
+    float checkerSize = 16.0;
+    //fragColor = myEffect1(fragCoord, iResolution.xy, checkerSize); //Creates a checker board pattern
     
     //Arrays
     //float myArray[6] = float[6](1.0, 2.0, 3.0, 3.0, 4.0, 5.0, 6.0);
